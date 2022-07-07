@@ -64,9 +64,12 @@ where PartialSheetContent: View {
             .zIndex(1)
             .transition(.opacity)
 
-          self.content
-            .background(Color.white)
-            .frame(maxWidth: .infinity)
+            VStack(spacing: 0) {
+                TopHandleBar()
+                self.content
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white)
+            }
             .padding(.bottom)
             .zIndex(2)
             .transition(.move(edge: .bottom))
@@ -77,9 +80,22 @@ where PartialSheetContent: View {
   }
 }
 
+fileprivate struct TopHandleBar: View {
+    var body: some View {
+        VStack {
+            RoundedRectangle(cornerRadius: CGFloat(5.0) / 2.0)
+                .frame(width: 40, height: 5)
+                .foregroundColor(.secondary)
+        }
+        .frame(height: 40)
+        .frame(maxWidth: .infinity)
+        .background(Color.white)
+        .cornerRadius(10, corners: [.topLeft, .topRight])
+    }
+}
+
+
 extension View {
-
-
   fileprivate func partialSheet<Content>(
     _ showPartialSheet: Binding<Bool>,
     @ViewBuilder content: @escaping () -> Content
@@ -91,6 +107,24 @@ extension View {
   }
 
 }
+
+fileprivate extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape( RoundedCorner(radius: radius, corners: corners) )
+    }
+}
+
+fileprivate struct RoundedCorner: Shape {
+    
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}
+
 
 struct CustomComponents_Previews: PreviewProvider {
   static var previews: some View {
